@@ -1,0 +1,28 @@
+// app global css in SCSS form
+a,
+button,
+input {
+  outline: none;
+}
+
+.q-btn__content {
+  letter-spacing: 0.1px;
+}
+
+.q-page {
+  min-height: 0 !important;
+  width: 360px;
+  margin: 0 auto;
+
+  body.screen--lg & {
+    width: 488px;
+  }
+}
+
+h1,h2,h3,h4,h5,h6 {
+  margin: 0;
+}
+
+a {
+  color: $link;
+}
