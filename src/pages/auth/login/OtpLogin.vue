@@ -26,6 +26,7 @@
         <input
           type="text"
           maxlength="1"
+          :style="statusCode ? 'border: 2px red solid' : ''"
           v-for="(input, index) in inputs"
           :key="input.id"
           ref="inputRef"
@@ -62,9 +63,13 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { LOGIN } from "src/base-url";
 import { api } from "src/boot/axios";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 const props = defineProps({
   component: {
@@ -106,10 +111,18 @@ const submitForm = () => {
     sms_token: otp.value,
   })
   .then(res => {
+   emit('update:userDetail', {...props.userDetail, sms_token: otp.value})
+    router.push('/')
     console.log(res.data);
   })
   .catch(err => {
-    console.log(err);
+      if (err.response.status ===  401 || 402 || 404) {
+        statusCode.value = err.response.data.detail
+      }
+      else {
+        statusCode.value = err.response.data.msg
+      }
+      console.log({ ...err });
   })
 }
 

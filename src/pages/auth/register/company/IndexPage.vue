@@ -28,7 +28,7 @@ const components = {
   3: defineAsyncComponent(() => import('../company/SuccessPage.vue')),
   4: defineAsyncComponent(() => import('../company/ValidCompany.vue'))
 }
-const component = ref(0)
+const component = ref(2)
 const companyDetail = ref({
   email_address: null,
   email_token: null,

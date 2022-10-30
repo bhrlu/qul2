@@ -15,7 +15,7 @@ export const REGISTER = {
 }
 
 export const LOGIN = {
-  otpSmsToken: '/Login/OTP/sms/Token',
+  otpSmsToken: '/Login/OTP/SMS/Token',
   otpEmailToken: '/Login/OTP/Email/Token'
 }
 

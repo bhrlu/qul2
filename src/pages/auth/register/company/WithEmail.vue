@@ -25,6 +25,7 @@
         outlined
         dense
         placeholder="example@Company.com"
+        lazy-rules
         :rules="ruleEmail"
         :error-message="statusCode"
         :error="!!statusCode"

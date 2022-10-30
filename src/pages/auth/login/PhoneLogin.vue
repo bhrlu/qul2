@@ -101,7 +101,6 @@ const loginWithUserPass = () => {
       password: password.value,
     }
   }).then(res => {
-    emit('update:component', 4)
     console.log(res.data);
   }).catch(err => {
     if (err.response.status === 403 || 401) {
