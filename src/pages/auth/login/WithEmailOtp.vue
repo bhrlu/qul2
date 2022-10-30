@@ -13,6 +13,8 @@
           no-error-icon
           lazy-rules
           :rules="ruleEmail"
+          :error-message="statusCode"
+          :error="!!statusCode"
           placeholder="example@Company.com"
           v-model="email">
           <template v-slot:prepend>
@@ -38,12 +40,15 @@
         @click="emailLoginPass">Login with password</q-btn>
     </q-form>
   </main>
+
+  <AuthFooter />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { api } from "src/boot/axios";
-import { LOGIN } from "src/base-url";
+import { OTP } from "src/base-url";
+import AuthFooter from "../AuthFooter.vue";
 
 const props = defineProps({
   component: {
@@ -67,17 +72,17 @@ const ruleEmail = ref([
 ])
 const statusCode = ref(null)
 const submitForm = () => {
-  api.post(LOGIN.otpEmailToken, {
-    email: email.value,
+  api.post(OTP.emailSendToken, {
+    email_address: email.value,
     otp_type: 'login',
   })
     .then(res => {
-      emit("update:userDetail", { ...props.userDetail, email: email.value })
-      emit("update:component", 1)
+      emit("update:userDetail", { ...props.userDetail, email_address: email.value })
+      emit("update:component", 4)
       console.log(res.data);
     })
     .catch(err => {
-      if (err.response.status === 403) {
+      if (err.response.status ===  422) {
         statusCode.value = err.response.data.detail
       }
       else {
