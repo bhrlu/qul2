@@ -2,7 +2,7 @@
   <main>
     <q-form
       class="q-mt-md"
-      @submit.prevent="">
+      @submit.prevent="loginWithUserPass">
 
       <div>
         <h6 class="text-caption">Email</h6>
@@ -61,6 +61,7 @@
 
 <script setup>
 import axios from 'axios';
+import { useMainStore } from 'src/stores/main-store';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -78,19 +79,22 @@ const emailLoginOtp = () => {
   emit('update:component', 3)
 }
 
+const store = useMainStore()
+
 const password = ref('')
 const isPwd = ref(true)
 
 const email = ref('')
 const loginWithUserPass = () => {
-  axios.post('http://tnc2.netall.live/Login/',null , {
+  axios.post('http://65.109.61.181:8080/Login/Username&Password',null , {
     params:{
-      username: username.value ,
+      username: email.value ,
       password: password.value ,
     }
   }).then(res => {
-    emit('update:component', 4)
-    console.log(res.data);
+    // emit('update:component', 4)
+    store.setToken(res.data.jwt.access_token)
+    console.log(res.data.jwt.access_token);
   }).catch(err => {
     if (err.response.status === 403 || 401) {
       statusCode.value = err.response.data.detail

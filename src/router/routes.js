@@ -11,6 +11,9 @@ const routes = [
       {
         path: '/company-auth',
         name: 'companyAuth',
+        meta: {
+          requiresAuth: true,
+        },
         component: () => import('src/pages/auth/register/company/IndexPage.vue')
       },
       {

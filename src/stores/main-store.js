@@ -22,7 +22,7 @@ export const useMainStore = defineStore("main", {
     //   }
     // },
     setToken(token) {
-      LocalStorage.set('tokem', token)
+      LocalStorage.set('token', token)
       this.token = token
     },
 

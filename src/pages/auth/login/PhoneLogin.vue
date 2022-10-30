@@ -95,7 +95,7 @@ const rulePassword = ref([
 
 const statusCode = ref(null)
 const loginWithUserPass = () => {
-  axios.post('http://65.109.61.181:8080/Login', null, {
+  axios.post('http://65.109.61.181:8080/Login/Username&Password',null, {
     params: {
       username: username.value,
       password: password.value,

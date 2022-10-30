@@ -1,4 +1,5 @@
 import { boot } from 'quasar/wrappers'
+import { LocalStorage } from 'quasar'
 import axios from 'axios'
 
 // Be careful when using SSR for cross-request state pollution
@@ -13,18 +14,18 @@ function GET_TOKEN (key) {
   return LocalStorage.getItem(key) || null
 }
 
-// api.interceptors.request.use(config => {
-//   const TOKEN = GET_TOKEN('token')
+api.interceptors.request.use(config => {
+  const TOKEN = GET_TOKEN('token')
 
-//   // Do something before request is sent
-//   config.headers.common.Authorization = `bearer ${TOKEN}`
+  // Do something before request is sent
+  config.headers.common.Authorization = `bearer ${TOKEN}`
 
-//   return config
-// }, error => {
-//   // Do something with request error
+  return config
+}, error => {
+  // Do something with request error
 
-//   return Promise.reject(error)
-// })
+  return Promise.reject(error)
+})
 
 
 export default boot(({ app }) => {
