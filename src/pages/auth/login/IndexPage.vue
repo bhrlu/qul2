@@ -37,7 +37,7 @@ const userDetail = ref({
   username: null,
   password: null,
   phone_number: null,
-  email: null
+  email: null,
 })
 
 const tab = ref(['Phone', 'Email']);

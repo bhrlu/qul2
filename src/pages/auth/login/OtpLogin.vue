@@ -20,7 +20,7 @@
       <span v-if="props.userDetail.email_address">{{ props.userDetail.email_address }}</span> -->
     </h6>
 
-    <q-form @submit.prevent="">
+    <q-form @submit.prevent="submitForm">
       <div class="row no-wrap q-gutter-x-sm q-mb-lg">
         <!-- :style="statusCode ? 'border: 2px red solid' : ''" -->
         <input
@@ -62,6 +62,8 @@
 </template>
 
 <script setup>
+import { LOGIN } from "src/base-url";
+import { api } from "src/boot/axios";
 import { ref } from "vue";
 
 const props = defineProps({
@@ -98,6 +100,18 @@ function moveToNextField(value, index) {
 
 // SUBMIT FORM
 const statusCode = ref('')
+const submitForm = () => {
+  api.post(LOGIN.otpSmsToken, {
+    phone_number: props.userDetail.phone_number,
+    sms_token: otp.value,
+  })
+  .then(res => {
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  })
+}
 
 // COUNTDOWN
 const prePage = () => {
@@ -108,7 +122,7 @@ const timer = ref(null);
 function startTimer() {
   timer.value = setInterval(() => {
     if (countDown.value === 0) {
-      // prePage()
+      prePage()
       clearInterval(timer.value);
       return;
     }
