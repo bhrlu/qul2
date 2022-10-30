@@ -1,62 +1,81 @@
 <template>
   <main>
     <q-form
-      class="q-mt-md"
+      class="q-gutter-y-md q-mt-lg"
       @submit.prevent="submitForm">
-      <h6 class="text-caption">Phone</h6>
-      <div class="row no-wrap q-gutter-x-sm">
+      <div class="row q-col-gutter-x-sm no-wrap">
         <q-select
           dense
+          outlined
           hide-dropdown-icon
           no-error-icon
-          outlined
-          class="col-3 q-ml-sm"></q-select>
+          class="col-4"
+          :options="mainStore.countries"
+          option-value="dial_code"
+          v-model="picked"
+          @update:model-value="
+            (value) => (picked = value.code + ' ' + value.dial_code)
+          ">
+          <template v-slot:option="countries">
+            <q-item v-bind="countries.itemProps">
+              <q-item-section avatar>
+                <q-img
+                  :src="countries.opt.flag_url"
+                  style="width: 24px; height: 16px" />
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>{{ countries.opt.dial_code }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
 
         <q-input
           dense
           outlined
           bottom-slots
           no-error-icon
-          lazy-rules
-          placeholder="Your phone number"
-          :rules="ruleNumber"
           :error-message="statusCode"
           :error="!!statusCode"
-          class="col-9"
-          v-model="number">
-          {{ number }}
-          <template v-slot:prepend>
-            <q-icon
-              name="phone_iphone"
-              color="grey" />
-          </template>
-        </q-input>
+          lazy-rules
+          :rules="ruleNumber"
+          mask="### ### ####"
+          unmasked-value
+          placeholder="Your phone number"
+          class="col-8"
+          v-model="number" />
       </div>
 
       <q-btn
         type="submit"
         color="secondary"
-        label="Login"
+        label="Continue to sign up"
         class="full-width button-font-weight"
         padding="12px 32px"
-        align="center" />
-
-      <q-btn
-        flat
-        no-caps
-        class="text-subtitle1 full-width"
-        @click="phoneLoginPass">Login with password</q-btn>
+        align="center"
+        no-caps />
     </q-form>
+
+    <q-btn
+      flat
+      no-caps
+      class="text-subtitle1 full-width"
+      @click="phoneLoginPass">Login with password</q-btn>
   </main>
 
   <AuthFooter />
 </template>
 
+<!-- eslint-disable vue/return-in-computed-property -->
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useMainStore } from "stores/main-store.js";
 import { api } from "src/boot/axios";
-import { LOGIN } from "src/base-url";
+import { OTP } from "src/base-url";
 import AuthFooter from "../AuthFooter.vue";
+
+const mainStore = useMainStore();
 
 const props = defineProps({
   component: {
@@ -72,24 +91,52 @@ const emit = defineEmits(["update:component", "update:userDetail"]);
 const phoneLoginPass = () => {
   emit('update:component', 0)
 }
+
 // SUBMIT FORM
 const number = ref('');
+const picked = ref("US +1");
+const pickedNum = computed(() => {
+  switch (picked.value.length) {
+    case 5:
+      return "00" + picked.value.slice(-1) + number.value;
+      break;
+
+    case 6:
+      return "00" + picked.value.slice(-2) + number.value;
+      break;
+
+    case 7:
+      return "00" + picked.value.slice(-3) + number.value;
+      break;
+
+    case 8:
+      return "00" + picked.value.slice(-4) + number.value;
+      break;
+
+    case 9:
+      return "00" + picked.value.slice(-5) + number.value;
+      break;
+
+    default:
+      break;
+  }
+});
 const statusCode = ref(null)
 const ruleNumber = ref([
   val => (!val == '') || 'Please enter your phone number',
 ])
 const submitForm = () => {
-  api.post(LOGIN.otpSmsToken, {
-    phone_number: number.value,
+  api.post(OTP.smsSendToken, {
+    phone_number: pickedNum.value,
     otp_type: 'login',
   })
     .then(res => {
-      emit("update:userDetail", { ...props.userDetail, phone_number: number.value })
-      emit("update:component", 1)
+      emit("update:userDetail", { ...props.userDetail, phone_number: pickedNum.value })
+      emit("update:component", 4)
       console.log(res.data);
     })
     .catch(err => {
-      if (err.response.status === 403) {
+      if (err.response.status === 403 && 401) {
         statusCode.value = err.response.data.detail
       }
       else {
@@ -101,39 +148,47 @@ const submitForm = () => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.q-input) {
-  width: 70.3%;
 
-  body.screen--lg & {
-    width: 78.5%;
+  h6 {
+    color: $grey-600;
   }
-}
 
-:deep(.q-field__marginal) {
-  height: 48px;
-}
+  :deep(.q-field__control) {
+    height: 48px;
+  }
 
-:deep(.q-field__control) {
-  height: 48px;
-}
+  :deep(.q-select) {
+    width: 100px;
+  }
 
-:deep(.q-field__prepend) {
-  order: 1;
-}
+  :deep(.q-input) {
+    width: 70.3%;
 
-:deep(.q-field__bottom) {
-  padding-left: 0;
-  padding-top: 5px;
-}
+    body.screen--lg & {
+      width: 78.5%;
+    }
+  }
 
-:deep(.q-field__append) {
-  margin-right: 6px;
-}
+  :deep(.q-field__marginal) {
+    height: 48px;
+  }
 
-:deep(.q-icon) {
-  margin-right: 0;
-}
+  :deep(.q-field__native) {
+    justify-content: center;
+  }
 
+  :deep(.q-field__bottom) {
+    padding: 3px 0 0 0;
+  }
+
+  :deep(.q-btn) {
+    margin-top: 10px;
+  }
+
+  > .q-btn:nth-child(3) {
+    margin-top: 15px;
+    color: $link
+  }
 :deep(.q-btn) {
   margin: 10px 0 0 0;
   color: $link;

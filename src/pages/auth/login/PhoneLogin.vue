@@ -89,13 +89,13 @@ const isPwd = ref(true)
 const ruleNumber = ref([
   val => (val && val.length > 0) || 'Please enter your phone number',
 ])
-
 const rulePassword = ref([
   val => (val && val.length > 0) || 'Please enter your password'
 ])
+
 const statusCode = ref(null)
 const loginWithUserPass = () => {
-  axios.post('http://tnc2.netall.live/Login/', null, {
+  axios.post('http://65.109.61.181:8080/Login', null, {
     params: {
       username: username.value,
       password: password.value,

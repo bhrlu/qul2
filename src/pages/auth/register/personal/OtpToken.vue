@@ -59,14 +59,16 @@
         no-caps />
     </q-form>
   </main>
+
+  <AuthFooter />
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useMainStore } from "src/stores/main-store";
 import { api } from "src/boot/axios";
 import { REGISTER } from "src/base-url";
-import AuthInput from '../../AutoInput.vue'
+import AuthFooter from "../../AuthFooter.vue";
 
 const mainStore = useMainStore()
 
@@ -101,7 +103,9 @@ function moveToNextField(value, index) {
     inputRef.value[nextIndex].focus();
   }
 }
-
+watch(otp, () => {
+  console.log(otp.value);
+})
 // SUBMIT FORM
 const statusCode = ref('')
 const registerUser = () => {

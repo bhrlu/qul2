@@ -1,7 +1,7 @@
 <template>
   <footer
     class="q-mt-md"
-    v-if="component !== 2">
+    v-if="component !== 2 && component !== 3">
     <div class="flex items-center justify-between no-wrap">
       <q-separator />
       <span class="q-px-xs text-overline">OR</span>

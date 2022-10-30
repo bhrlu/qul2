@@ -35,9 +35,23 @@
           dense
           no-error-icon
           label="-Select Field of activity"
-          :options="['IT']"
+          :options="activityOption"
+          options-selected-class="text-deep-orange"
           :rules="[val => !!val || '* Required']"
-          v-model="models.activity" />
+          v-model="models.activity">
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-label header>{{ scope.opt.category_name }}</q-item-label>
+            </q-item>
+            <q-item
+              v-bind="scope.itemProps"
+              class="q-pl-xl">
+              <q-item-label
+                v-for="sub in scope.opt.sub_categories"
+                :key="sub">{{sub}}</q-item-label>
+            </q-item>
+          </template>
+        </q-select>
       </div>
 
       <div>
@@ -79,6 +93,7 @@
 import { reactive, ref } from 'vue';
 import { api } from 'src/boot/axios';
 import { REGISTER } from 'src/base-url';
+import axios from 'axios';
 
 const tabs = ref(['sign up', 'verify account', 'complete info'])
 const props = defineProps({
@@ -123,6 +138,18 @@ const submitForm = () => {
       console.log(err.response);
     })
 }
+
+const activityOption = ref([])
+const getActivity = () => {
+  axios.get('http://65.109.61.181:8080/ActivityCategories/GetList')
+  .then(res => {
+    activityOption.value = res.data
+  })
+  .catch(err => {
+    console.log(err);
+  })
+}
+getActivity()
 </script>
 
 <style lang="scss" scoped>
@@ -184,4 +211,9 @@ main {
     padding: 5px 0 0 0;
   }
 }
+
+:deep(.q-item-label) {
+  display: block;
+}
 </style>
+
