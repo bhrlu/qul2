@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
   <main>
     <div class="q-mb-lg">
@@ -26,32 +27,6 @@
           no-error-icon=""
           :rules="rulesName"
           v-model="models.name" />
-      </div>
-
-      <div>
-        <h6 class="text-caption">Field of activity <span>(Required)</span></h6>
-        <q-select
-          outlined
-          dense
-          no-error-icon
-          label="-Select Field of activity"
-          :options="activityOption"
-          options-selected-class="text-deep-orange"
-          :rules="[val => !!val || '* Required']"
-          v-model="models.activity">
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps">
-              <q-item-label header>{{ scope.opt.category_name }}</q-item-label>
-            </q-item>
-            <q-item
-              v-bind="scope.itemProps"
-              class="q-pl-xl">
-              <q-item-label
-                v-for="sub in scope.opt.sub_categories"
-                :key="sub">{{sub}}</q-item-label>
-            </q-item>
-          </template>
-        </q-select>
       </div>
 
       <div>
@@ -144,6 +119,7 @@ const getActivity = () => {
   axios.get('http://65.109.61.181:8080/ActivityCategories/GetList')
   .then(res => {
     activityOption.value = res.data
+    console.log(res.data);
   })
   .catch(err => {
     console.log(err);

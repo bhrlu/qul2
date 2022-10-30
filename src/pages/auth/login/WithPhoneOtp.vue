@@ -136,7 +136,7 @@ const submitForm = () => {
       console.log(res.data);
     })
     .catch(err => {
-      if (err.response.status === 403 && 401) {
+      if (err.response.status === 403 && 401 && 422 && 404) {
         statusCode.value = err.response.data.detail
       }
       else {

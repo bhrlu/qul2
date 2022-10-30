@@ -26,6 +26,7 @@
         <input
           type="text"
           maxlength="1"
+          :style="statusCode ? 'border: 2px red solid' : ''"
           v-for="(input, index) in inputs"
           :key="input.id"
           ref="inputRef"
@@ -62,9 +63,13 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { LOGIN } from "src/base-url";
 import { api } from "src/boot/axios";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 const props = defineProps({
   component: {
@@ -101,16 +106,50 @@ function moveToNextField(value, index) {
 // SUBMIT FORM
 const statusCode = ref('')
 const submitForm = () => {
-  api.post(LOGIN.otpSmsToken, {
+  const body = {
     phone_number: props.userDetail.phone_number,
+    email_address: props.userDetail.email_address,
     sms_token: otp.value,
-  })
-  .then(res => {
-    console.log(res.data);
-  })
-  .catch(err => {
-    console.log(err);
-  })
+    email_token: otp.value
+  }
+  for (const item in body){
+    if (!body[item]) delete body[item]
+  }
+
+  if(props.userDetail.email_address === null) {
+    api.post(LOGIN.otpSmsToken, body)
+    .then(res => {
+    emit('update:userDetail', {...props.userDetail, sms_token: otp.value})
+      router.push('/')
+      console.log(res.data);
+    })
+    .catch(err => {
+        if (err.response.status ===  401 || 402 || 404 || 422) {
+          statusCode.value = err.response.data.detail
+        }
+        else {
+          statusCode.value = err.response.data.msg
+        }
+        console.log({ ...err });
+    })
+  }
+ else {
+    api.post(LOGIN.otpEmailToken, body)
+    .then(res => {
+    emit('update:userDetail', {...props.userDetail, sms_token: otp.value})
+      router.push('/')
+      console.log(res.data);
+    })
+    .catch(err => {
+        if (err.response.status ===  401 || 402 || 404 || 422) {
+          statusCode.value = err.response.data.detail
+        }
+        else {
+          statusCode.value = err.response.data.msg
+        }
+        console.log({ ...err });
+    })
+  }
 }
 
 // COUNTDOWN
